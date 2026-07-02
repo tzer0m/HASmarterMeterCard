@@ -50,7 +50,7 @@ class HASmarterMeterCard extends HTMLElement {
                     border: 1px solid var(--divider-color);
                     border-radius: 8px;
                     padding: 8px 16px;
-                    flex: 1;
+                    flex: 5;
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -64,20 +64,21 @@ class HASmarterMeterCard extends HTMLElement {
                     border-radius: 8px;
                     padding: 8px 16px;
                     white-space: nowrap;
-                    flex: 1;
+                    flex: 2;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                 }
                 .last-read {
-                    font-size: 11px;
-                    color: var(--secondary-text-color);
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: var(--primary-text-color);
                     background: var(--secondary-background-color);
                     border: 1px solid var(--divider-color);
                     border-radius: 8px;
-                    padding: 8px 12px;
+                    padding: 8px 16px;
                     white-space: nowrap;
-                    flex: 1;
+                    flex: 3;
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -142,8 +143,8 @@ class HASmarterMeterCard extends HTMLElement {
             <ha-card>
                 <div class="top-row">
                     <div class="current-reading" id="current-reading">— kWh</div>
+                    <div class="last-read" id="last-read">Last Read: —</div>
                     <div class="success-rate" id="success-rate">—%</div>
-                    <div class="last-read" id="last-read">Last read: —</div>
                 </div>
                 <div class="grid">
                     <div class="grid-header"></div>
@@ -168,10 +169,8 @@ class HASmarterMeterCard extends HTMLElement {
     _update() {
         const currentReading = this._val("Current Reading");
         const currentEntity = this._getEntity("Current Reading");
-        const lastRead = currentEntity?.attributes?.last_checked    
-            ? new Date(currentEntity.attributes.last_checked).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
-            : currentEntity?.last_updated
-            ? new Date(currentEntity.last_updated).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+        const lastRead = currentEntity?.attributes?.last_captured_at
+            ? new Date(currentEntity.attributes.last_captured_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
             : "—";
         const successRate = this._val("Reading Success Rate");
 
@@ -184,7 +183,7 @@ class HASmarterMeterCard extends HTMLElement {
         const cost30d = this._val("Cost Last 30 Days");
 
         this.shadowRoot.getElementById("current-reading").innerHTML = currentReading !== null ? `${currentReading.toLocaleString()} <span class="unit">kWh</span>` : "— kWh";
-        this.shadowRoot.getElementById("last-read").textContent = `Last read: ${lastRead}`;
+        this.shadowRoot.getElementById("last-read").textContent = `Last Read: ${lastRead}`;
         this.shadowRoot.getElementById("success-rate").textContent = successRate !== null ? `${successRate}%` : "—%";
 
         this.shadowRoot.getElementById("usage-today").textContent = usageToday !== null ? usageToday.toFixed(0) : "—";
