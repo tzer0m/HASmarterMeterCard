@@ -38,7 +38,7 @@ class HASmarterMeterCard extends HTMLElement {
                 .top-row {
                     display: flex;
                     justify-content: space-between;
-                    align-items: center;
+                    align-items: stretch;
                     margin-bottom: 16px;
                     gap: 12px;
                 }
@@ -51,6 +51,13 @@ class HASmarterMeterCard extends HTMLElement {
                     border-radius: 8px;
                     padding: 8px 16px;
                     flex: 1;
+                    display: flex;
+                    align-items: center;
+                }
+                .right-col {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 6px;
                 }
                 .success-rate {
                     font-size: 18px;
@@ -61,6 +68,24 @@ class HASmarterMeterCard extends HTMLElement {
                     border-radius: 8px;
                     padding: 8px 16px;
                     white-space: nowrap;
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .last-read {
+                    font-size: 11px;
+                    color: var(--secondary-text-color);
+                    background: var(--secondary-background-color);
+                    border: 1px solid var(--divider-color);
+                    border-radius: 8px;
+                    padding: 8px 12px;
+                    white-space: nowrap;
+                    text-align: center;
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
                 .grid {
                     display: grid;
@@ -121,7 +146,10 @@ class HASmarterMeterCard extends HTMLElement {
             <ha-card>
                 <div class="top-row">
                     <div class="current-reading" id="current-reading">— kWh</div>
-                    <div class="success-rate" id="success-rate">—%</div>
+                    <div class="right-col">
+                        <div class="success-rate" id="success-rate">—%</div>
+                        <div class="last-read" id="last-read">Last read: —</div>
+                    </div>
                 </div>
                 <div class="grid">
                     <div class="grid-header"></div>
@@ -145,33 +173,33 @@ class HASmarterMeterCard extends HTMLElement {
 
     _update() {
         const currentReading = this._val("Current Reading");
+        const currentEntity = this._getEntity("Current Reading");
+        const lastRead = currentEntity?.attributes?.last_checked    
+            ? new Date(currentEntity.attributes.last_checked).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+            : currentEntity?.last_updated
+            ? new Date(currentEntity.last_updated).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+            : "—";
         const successRate = this._val("Reading Success Rate");
+
         const usageToday = this._val("Usage Last 24 Hours");
         const usage7d = this._val("Usage Last 7 Days");
         const usage30d = this._val("Usage Last 30 Days");
+
         const costToday = this._val("Cost Last 24 Hours");
         const cost7d = this._val("Cost Last 7 Days");
         const cost30d = this._val("Cost Last 30 Days");
 
-        this.shadowRoot.getElementById("current-reading").innerHTML =
-            currentReading !== null ? `${currentReading.toLocaleString()} <span class="unit">kWh</span>` : "— kWh";
+        this.shadowRoot.getElementById("current-reading").innerHTML = currentReading !== null ? `${currentReading.toLocaleString()} <span class="unit">kWh</span>` : "— kWh";
+        this.shadowRoot.getElementById("last-read").textContent = `Last read: ${lastRead}`;
+        this.shadowRoot.getElementById("success-rate").textContent = successRate !== null ? `${successRate}%` : "—%";
 
-        this.shadowRoot.getElementById("success-rate").textContent =
-            successRate !== null ? `${successRate}%` : "—%";
+        this.shadowRoot.getElementById("usage-today").textContent = usageToday !== null ? usageToday.toFixed(0) : "—";
+        this.shadowRoot.getElementById("usage-7d").textContent = usage7d !== null ? usage7d.toFixed(0) : "—";
+        this.shadowRoot.getElementById("usage-30d").textContent = usage30d !== null ? usage30d.toFixed(0) : "—";
 
-        this.shadowRoot.getElementById("usage-today").textContent =
-            usageToday !== null ? usageToday.toFixed(0) : "—";
-        this.shadowRoot.getElementById("usage-7d").textContent =
-            usage7d !== null ? usage7d.toFixed(0) : "—";
-        this.shadowRoot.getElementById("usage-30d").textContent =
-            usage30d !== null ? usage30d.toFixed(0) : "—";
-
-        this.shadowRoot.getElementById("cost-today").textContent =
-            costToday !== null ? `£${costToday.toFixed(2)}` : "—";
-        this.shadowRoot.getElementById("cost-7d").textContent =
-            cost7d !== null ? `£${cost7d.toFixed(2)}` : "—";
-        this.shadowRoot.getElementById("cost-30d").textContent =
-            cost30d !== null ? `£${cost30d.toFixed(2)}` : "—";
+        this.shadowRoot.getElementById("cost-today").textContent = costToday !== null ? `£${costToday.toFixed(2)}` : "—";
+        this.shadowRoot.getElementById("cost-7d").textContent = cost7d !== null ? `£${cost7d.toFixed(2)}` : "—";
+        this.shadowRoot.getElementById("cost-30d").textContent = cost30d !== null ? `£${cost30d.toFixed(2)}` : "—";
     }
 
     getCardSize() {
