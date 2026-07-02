@@ -53,11 +53,7 @@ class HASmarterMeterCard extends HTMLElement {
                     flex: 1;
                     display: flex;
                     align-items: center;
-                }
-                .right-col {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 6px;
+                    justify-content: center;
                 }
                 .success-rate {
                     font-size: 18px;
@@ -81,7 +77,6 @@ class HASmarterMeterCard extends HTMLElement {
                     border-radius: 8px;
                     padding: 8px 12px;
                     white-space: nowrap;
-                    text-align: center;
                     flex: 1;
                     display: flex;
                     align-items: center;
@@ -140,16 +135,15 @@ class HASmarterMeterCard extends HTMLElement {
                     font-size: 11px;
                     font-weight: 400;
                     color: var(--secondary-text-color);
+                    margin-left: 4px;
                 }
             </style>
 
             <ha-card>
                 <div class="top-row">
                     <div class="current-reading" id="current-reading">— kWh</div>
-                    <div class="right-col">
-                        <div class="success-rate" id="success-rate">—%</div>
-                        <div class="last-read" id="last-read">Last read: —</div>
-                    </div>
+                    <div class="success-rate" id="success-rate">—%</div>
+                    <div class="last-read" id="last-read">Last read: —</div>
                 </div>
                 <div class="grid">
                     <div class="grid-header"></div>
